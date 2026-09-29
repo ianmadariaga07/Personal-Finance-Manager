@@ -1,0 +1,289 @@
+<!-- SideNavBar -->
+<nav class="bg-surface border-r border-outline-variant shadow-sm hidden lg:flex flex-col fixed left-0 top-0 h-screen p-stack-md z-40 docked w-72">
+  <div class="flex items-center gap-3 mb-stack-lg px-2">
+    <div class="w-10 h-10 rounded bg-primary flex items-center justify-center text-on-primary font-bold" style="font-family: 'Hanken Grotesk', sans-serif; font-size: 24px;">
+      K
+    </div>
+    <div>
+      <h1 class="text-on-surface font-bold" style="font-family: 'Hanken Grotesk', sans-serif; font-size: 24px;">KYRIESROOM</h1>
+      <p class="text-on-surface-variant text-xs">PAGINA PERSONAL</p>
+    </div>
+  </div>
+  <ul class="flex flex-col gap-2 grow">
+    <!-- Active Tab: Dashboard -->
+    <li>
+      <a class="flex items-center gap-3 px-4 py-3 bg-primary-container text-on-primary-container rounded hover:bg-surface-variant transition-all translate-x-1 duration-200" href="#">
+        <span class="material-symbols-outlined">dashboard</span>
+        <span class="text-sm font-medium">Dashboard</span>
+      </a>
+    </li>
+    <li>
+      <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded transition-all" href="#">
+        <span class="material-symbols-outlined">analytics</span>
+        <span class="text-sm font-medium">Analítica</span>
+      </a>
+    </li>
+    <li>
+      <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded transition-all" href="#">
+        <span class="material-symbols-outlined">event</span>
+        <span class="text-sm font-medium">Calendario</span>
+      </a>
+    </li>
+  </ul>
+  <div class="mt-auto">
+    <button class="w-full bg-transparent border border-primary text-primary text-sm py-3 rounded hover:bg-primary/10 transition-colors tracking-wider flex items-center justify-center gap-2">
+      <span class="material-symbols-outlined" style="font-size: 18px;">settings</span>
+      Ajustes
+    </button>
+  </div>
+</nav>
+
+<!-- Main Content Area -->
+<main class="flex-1 lg:ml-72 flex flex-col min-h-screen">
+  <!-- TopNavBar -->
+  <header class="bg-surface/80 backdrop-blur-md border-b border-outline-variant sticky top-0 z-30 flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop h-20 mx-auto">
+    <div class="flex items-center lg:hidden">
+      <button class="text-on-surface-variant mr-4 hover:text-on-surface transition-colors">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+      <span class="font-bold text-on-surface text-xl">KyriesRoom</span>
+    </div>
+    <div class="hidden lg:block">
+      <h2 class="text-on-surface font-bold tracking-tight" style="font-family: 'Hanken Grotesk', sans-serif; font-size: 32px;">FINANZAS</h2>
+    </div>
+    <div class="flex items-center gap-4">
+      <button class="text-on-surface-variant hover:text-on-surface hover:bg-surface-variant p-2 rounded transition-colors hidden md:block">
+        <span class="material-symbols-outlined">notifications</span>
+      </button>
+      <!-- boton nueva subcuenta/user -->
+      <button (click)="isSubAccountModalVisible.set(true)" class="bg-transparent border border-primary text-primary text-sm px-5 py-2.5 rounded shadow-sm hover:bg-primary/10 transition-all ml-2 flex items-center gap-2">
+        <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+        Nueva Subcuenta/Usuario
+      </button>
+      <!-- boton nueva transaccion -->
+      <button (click)="isTransactionVisible.set(true);isTransactionEdit.set(null)" class="bg-transparent border border-primary text-primary text-sm px-5 py-2.5 rounded shadow-sm hover:bg-primary/10 transition-all ml-2 flex items-center gap-2">
+        <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+        Nueva Transacción
+      </button>
+    </div>
+  </header>
+
+  <!-- Canvas: tarjetas y tabla) -->
+  <div class="p-margin-mobile md:p-margin-desktop max-w-container-max mx-auto w-full space-y-gutter flex-1 mt-8">
+    <!-- Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+
+      <!-- Tarjeta 1: Tarjeta Azul -->
+      <div class="bg-surface-variant rounded-xl shadow-sm border border-outline-variant p-6 hover:border-outline transition-colors flex flex-col justify-between h-full relative overflow-hidden group">
+        <div class="absolute right-0 top-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -mr-10 -mt-10 transition-opacity group-hover:opacity-100 opacity-50"></div>
+        <div class="relative z-10">
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-sm text-on-surface">Tarjeta Azul</span>
+            <span class="material-symbols-outlined text-on-surface-variant">credit_card</span>
+          </div>
+          <h3 class="text-on-surface font-bold" style="font-family: 'Hanken Grotesk', sans-serif; font-size: 40px;">{{ globalCreditDebt() | currency:'MXN' }}</h3>
+        </div>
+        <div class="relative z-10 mt-6 flex items-center justify-between">
+          <span class="px-4 py-1 rounded bg-surface text-on-surface text-xs border border-outline-variant">
+             Línea: $27,500
+          </span>
+          <span class="px-4 py-1 rounded bg-surface text-on-surface text-xs border border-outline-variant">
+             Fecha de Pago: 13
+          </span>
+          <span class="px-4 py-1 rounded bg-surface text-on-surface text-xs border border-outline-variant">
+             Día de Corte: 24
+          </span>
+        </div>
+      </div>
+
+      <!-- Tarjeta 2: Total Real -->
+      <div class="bg-surface-variant rounded-xl shadow-sm border border-outline-variant p-6 hover:border-outline transition-colors flex flex-col justify-between h-full relative overflow-hidden group">
+        <div class="absolute left-0 bottom-0 w-32 h-32 bg-secondary/10 rounded-full blur-3xl -ml-10 -mb-10 transition-opacity group-hover:opacity-100 opacity-50"></div>
+        <div class="relative z-10">
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-sm text-on-surface-variant">Total Real</span>
+            <span class="material-symbols-outlined text-on-surface-variant">attach_money</span>
+          </div>
+          <h3 class="text-on-surface font-bold" style="font-family: 'Hanken Grotesk', sans-serif; font-size: 40px;">{{ globalRealBalance() | currency:'MXN' }}</h3>
+          <p class="text-xs text-on-surface-variant mt-1">Disponible</p>
+        </div>
+        <div class="relative z-10 mt-6 w-full bg-surface-variant rounded h-1.5 overflow-hidden">
+          <div class="bg-secondary h-1.5 rounded shadow-[0_0_10px_rgba(0,255,255,0.5)]" style="width: 77%"></div>
+        </div>
+      </div>
+
+      <!-- Tarjeta 3: Total App -->
+      <div class="bg-surface-variant rounded-xl shadow-sm border border-outline-variant p-6 hover:border-outline transition-colors flex flex-col justify-between h-full relative overflow-hidden group">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-sm text-on-surface-variant">Total App</span>
+            <span class="material-symbols-outlined text-on-surface-variant">account_balance_wallet</span>
+          </div>
+          <h3 class="text-on-surface font-bold" style="font-family: 'Hanken Grotesk', sans-serif; font-size: 40px;">{{ globalTotalApp() | currency:'MXN' }}</h3>
+        </div>
+        <div class="mt-6 flex items-center gap-2">
+          <span class="material-symbols-outlined text-secondary text-sm filled">arrow_upward</span>
+          <span class="text-xs text-secondary">+2.4% este mes</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Subcuentas -->
+    <div class="mt-8">
+      <!-- contenedor para las tarjetitas -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- account es la variable temporal para cada vuelta del ciclo -->
+        <!-- track account.id le ayuda a angular a ser super rapido al renderizar -->
+        @for (account of subAccounts(); track account.id) {
+          <div class="bg-surface-variant/40 rounded-lg border border-outline-variant p-4 flex flex-col gap-2 hover:bg-surface-variant/60 transition-colors">
+            <!-- nombre de la subcuenta -->
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-on-surface uppercase tracking-wide text-sm">{{ account.name }}</span>
+              <span class="material-symbols-outlined text-outline text-sm">person</span>
+            </div>
+            <!-- saldos -->
+            <div class="flex justify-between mt-3">
+              <div>
+                <p class="text-xs text-on-surface-variant mb-1">Disponible</p>
+                <p class="text-secondary font-medium text-sm">
+                  {{ account.realBalance > 0 ? '+' : '' }}{{ account.realBalance | currency:'MXN' }}
+                </p>
+              </div>
+              <div class="text-right">
+                <p class="text-xs text-on-surface-variant mb-1">Deuda (Azul)</p>
+                <p class="text-primary font-medium text-sm">
+                  {{ account.creditCardDebt > 0 ? '+' : '' }}{{ account.creditCardDebt | currency:'MXN' }}
+                </p>
+              </div>
+            </div>
+          </div>
+        } @empty {
+          <div class="col-span-3 text-center text-on-surface-variant text-sm py-8 border border-dashed border-outline-variant rounded-lg">
+            No hay subcuentas registradas.
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Movimientos Recientes Table -->
+    <div class="bg-surface rounded-xl shadow-sm border border-outline-variant overflow-hidden mt-8">
+      <div class="p-6 border-b border-outline-variant flex justify-between items-center">
+        <h3 class="text-xl text-on-surface font-bold" style="font-family: 'Hanken Grotesk', sans-serif;">Movimientos Recientes</h3>
+        <button class="text-sm text-primary hover:text-primary/80 transition-colors">Ver todos</button>
+      </div>
+
+      <div class="overflow-x-auto">
+
+        <p-table [value]="transactions()"
+                 class="w-full text-left border-collapse"
+                 [paginator]="true"
+                 [rows]="5"
+                 [showCurrentPageReport]="true"
+                 [sortOrder]="-1"
+                 sortField="transactionDate"
+                 currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} movimientos">
+          <!-- thead -->
+          <ng-template #header>
+            <tr class="bg-surface-bright border-b border-outline-variant">
+              <th class="text-xs text-on-surface-variant px-6 py-4 font-semibold uppercase tracking-wider">Responsable</th>
+              <th class="text-xs text-on-surface-variant px-6 py-4 font-semibold uppercase tracking-wider ">Concepto</th>
+              <th class="text-xs text-on-surface-variant px-6 py-4 font-semibold uppercase tracking-wider text-center">Categoría</th>
+              <th class="text-xs text-on-surface-variant px-6 py-4 font-semibold uppercase tracking-wider text-center">Fecha</th>
+              <th class="text-xs text-on-surface-variant px-6 py-4 font-semibold uppercase tracking-wider text-center">Monto</th>
+              <th class="text-xs text-on-surface-variant px-6 py-4 font-semibold uppercase tracking-wider text-center">Acciones</th>
+            </tr>
+          </ng-template >
+          <!-- tanto la etiqueta #body como #header son importantes para que primeng pueda pintar la tabla y el header-->
+          <ng-template #body let-tx>
+            <tr class="hover:bg-surface-variant transition-colors group border-b border-outline-variant/50">
+
+              <td class="px-6 py-4 text-on-surface-variant whitespace-nowrap">{{ tx.subAccount?.name }}</td>
+
+              <td class="px-6 py-4">
+                <p class="text-sm text-on-surface">{{ tx.concept }}</p>
+                <!-- <p class="text-xs text-on-surface-variant">{{ tx.TransactionType }}</p> -->
+              </td>
+
+              <td class="px-6 py-4 whitespace-nowrap text-center">
+                @if (tx.type === TransactionType.EXPENSE && tx.isCreditCard) {
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs bg-primary-container text-on-primary-container border border-primary/20">
+                    Tarjeta Azul
+                  </span>
+                } @else if (tx.type === TransactionType.EXPENSE && !tx.isCreditCard) {
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs bg-surface-variant text-on-surface-variant border border-outline-variant">
+                    Débito
+                  </span>
+                } @else if (tx.type === TransactionType.INCOME) {
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs bg-surface-variant text-on-surface-variant border border-outline-variant">
+                    Ingreso
+                  </span>
+                } @else {
+                  <!-- El caso que sobra es TransactionType.PAYMENT -->
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs bg-surface-variant text-on-surface-variant border border-outline-variant">
+                    Pago a Tarjeta
+                  </span>
+                }
+              </td>
+              <!-- fecha -->
+              <td class="px-6 py-4 text-on-surface-variant whitespace-nowrap text-center">{{ tx.transactionDate | date}}</td>
+              <!-- amounts -->
+              <td class="px-6 py-4 font-semibold text-center">
+                @if(tx.type === TransactionType.INCOME){
+                  <span class="text-secondary drop-shadow-[0_0_8px_rgba(0,255,255,0.4)]">
+                    +{{ tx.amount | currency:'MXN' }}
+                  </span>
+                }@else if(tx.type === TransactionType.EXPENSE){
+                  <span class="text-primary">
+                    -{{ tx.amount | currency:'MXN' }}
+                  </span>
+                }@else{
+                  <span class="text-on-surface">
+                    -{{ tx.amount | currency:'MXN' }}
+                  </span>
+                }
+              </td>
+              <!-- acciones -->
+              <td class="px-6 py-4 whitespace-nowrap text-center">
+                <button type="button" (click)="editTransaction(tx)" class="bg-transparent border border-primary text-primary text-sm px-3 py-1.5 rounded shadow-sm hover:bg-primary/10 transition-all ml-2 inline-flex items-center gap-2">
+                  <span class="material-symbols-outlined" style="font-size: 18px;">edit</span>
+                </button>
+                <button class="bg-transparent border border-primary text-primary text-sm px-3 py-1.5 rounded shadow-sm hover:bg-primary/10 transition-all ml-2 inline-flex items-center gap-2">
+                  <span class="material-symbols-outlined" style="font-size: 18px;">density_small</span>
+                </button>
+                <button type="button" (click)="deleteTransaction(tx.id)" class="bg-transparent border border-primary text-primary text-sm px-3 py-1.5 rounded shadow-sm hover:bg-primary/10 transition-all ml-2 inline-flex items-center gap-2">
+                  <span class="material-symbols-outlined" style="font-size: 18px;">delete</span>
+                </button>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+  </div>
+
+  <!--AQUI UN SIGNAL LLEVA PARENTESIS Y EL OTRO NO POR LA DIRECCION DE LOS DATOS.
+      [(isVisible)]="isTransactionVisible"
+      AQUI EL SIGNAL NO LLEVA PARENTESIS PORQUE LA SINTAXIS [( )] SE REFIERE A QUE EL COMPONENTE HIJO PUEDE
+      LEER Y ESCRIBIR EL DATO. IGUAL LE MANDAS LA CAJA COMPLETA
+      [subAccountList]="subAccounts()"
+      SI LLEVA CORCHETES SIMPLES [] SIGNIFICA QUE SOLO SE LEEN LOS DATOS Y
+      SE ENVIAN AL COMPONENTE HIJO, UN SOLO SENTIDO, ASI QUE SE LE PONE PARENTESIS AL SIGNAL.
+      SOLO LE ENVIAS EL DATO CRUDO, NO LA CAJA
+      -->
+  <app-transaction-modal
+    [(isVisible)]="isTransactionVisible"
+    [transactionData]="isTransactionEdit()"
+    [subAccountList]="subAccounts()"
+    (transactionSaved)="loadTransactions();loadSubAccounts()">
+  </app-transaction-modal>
+
+  <app-confirm-delete-transaction
+    [(isVisible)]="isTransactionDelete"
+    (onConfirm)="executeDelete()">
+  </app-confirm-delete-transaction>
+
+  <app-sub-account-modal
+    [(isVisible)]="isSubAccountModalVisible"
+    (onUserCreated)="loadSubAccounts()">
+  </app-sub-account-modal>
+</main>
