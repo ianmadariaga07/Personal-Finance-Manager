@@ -1,30 +1,35 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy } from 'passport-jwt';
+import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor() {
-    super({
-      secretOrKey: 'palabra-secreta-segura',
-      ignoreExpiration: false,
+    const jwtSecret = process.env.JWT_SECRET;
 
-      jwtFromRequest: (req: Request) => {
-        //Recibe la peticion HTTP que viene de Angular
-        let token: string | null = null;
-        //Si la petición existe y el cookie-parser ya encontro cookies adentro
-        if (req && req.cookies) {
-          //Saca solo la cookie llamada access_token
+    if (!jwtSecret) {
+      throw new Error('Falta JWT_SECRET en las variables de entorno');
+    }
+
+    super({
+      secretOrKey: jwtSecret,
+      ignoreExpiration: false,
+      //extraemos el token desde la cookie httponly
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        (req: Request): string | null => {
+          if (!req || !req.cookies) {
+            return null;
+          }
+          //Saca solo la cookie llamada access_token y se la pasamos a Passport para que lo valide
           const cookies = req.cookies as Record<string, string>;
-          token = cookies['access_token'];
-        }
-        // Se lo devolvemos a Passport para que lo valide
-        return token;
-      },
+          return cookies['access_token'] ?? null;
+        },
+      ]),
     });
   }
 
+  //inyectamos datos del payload en request.user
   validate(payload: { sub: string; email: string }) {
     return { userId: payload.sub, email: payload.email };
   }

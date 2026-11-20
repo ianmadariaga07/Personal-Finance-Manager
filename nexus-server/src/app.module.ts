@@ -7,15 +7,22 @@ import { TransactionsModule } from './transactions/transactions.module';
 import { SubAccountsModule } from './sub-accounts/sub-accounts.module';
 import { AuthModule } from './auth/auth.module';
 
+//valida url de la base de datos al arrancar
+const databaseUrl = process.env.DATABASE_URL;
+
+if (!databaseUrl) {
+  throw new Error('Falta DATABASE_URL en el archivo .env');
+}
+
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'admin',
-      password: 'admin123',
-      database: 'nexus_db',
+      url: databaseUrl,
+      //habilita tls con verificacion para neon
+      ssl: databaseUrl.includes('sslmode=require')
+          ? { rejectUnauthorized: false }
+          : false,
       entities: [],
       autoLoadEntities: true,
       synchronize: true,
