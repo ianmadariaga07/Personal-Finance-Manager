@@ -9,7 +9,7 @@ export const routes: Routes = [
       import('./components/login/login').then((m) => m.Login),
   },
   {
-    path: 'dashboard',
+    path: 'transactions',
     //proteccion de la ruta y lazy loading de transacciones
     canActivate: [authGuard],
     loadComponent: () =>
