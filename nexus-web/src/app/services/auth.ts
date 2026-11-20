@@ -1,6 +1,8 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
+import {environment} from '../../environments/environment';
+import {authGuard} from '../guards/auth-guard';
 
 export interface LoginResponse {
   message: string;
@@ -20,7 +22,7 @@ export interface LoginResponse {
 export class AuthService {
   //HttpClient para hacer peticiones
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/api/auth';
+  private apiUrl = `${environment.apiUrl}/auth`;
 
   //ESTADO GLOBAL:Usamos Signals para que cualquier componente puede leer esto al instante
   currentUser = signal<any | null>(null);
