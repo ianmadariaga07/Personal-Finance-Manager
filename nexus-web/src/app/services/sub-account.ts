@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {SubAccount} from '../interfaces/sub-account.interface';
+import {environment} from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SubAccountService {
-  private apiUrl: string = "http://localhost:3000/api/sub-accounts";
+  private apiUrl: string = `${environment.apiUrl}/sub-accounts`;
   constructor(private http: HttpClient) { }
 
   getAllSubAccounts(){

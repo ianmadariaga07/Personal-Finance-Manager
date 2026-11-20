@@ -1,9 +1,30 @@
 import { Routes } from '@angular/router';
-import { TransactionList} from './components/transaction-list/transaction-list';
-import { Login } from './components/login/login';
+import {authGuard} from './guards/auth-guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: 'transactions', component: TransactionList },
-  { path: 'login', component: Login },
+  {
+    path: 'login',
+    //lazy loading para la vista del login
+    loadComponent: () =>
+      import('./components/login/login').then((m) => m.Login),
+  },
+  {
+    path: 'dashboard',
+    //proteccion de la ruta y lazy loading de transacciones
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./components/transaction-list/transaction-list').then(
+        (m) => m.TransactionList,
+      ),
+  },
+  {
+    path: '',
+    redirectTo: 'login',
+    pathMatch: 'full',
+  },
+  {
+    //rutas inexistentes
+    path: '**',
+    redirectTo: 'login',
+  },
 ];
