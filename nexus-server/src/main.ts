@@ -26,7 +26,7 @@ async function bootstrap() {
       .map((origin) => origin.trim());
   //configuracion del cors y credenciales activas
   app.enableCors({
-    origin: 'http://localhost:4200',
+    origin: (process.env.FRONTEND_URL ?? 'http://localhost:4200'),
     credentials: true,
   });
 
