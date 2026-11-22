@@ -72,7 +72,20 @@ export class AuthService {
     return this.jwtService.sign(payload);
   }
 
-  forgotPassword(email: string) {
-    return this.jwtService.sign(email);
+  async forgotPassword(email: string) {
+    const user = await this.userRepository.findOne({
+      where: { email },
+      select: ['id', 'email', 'password'],
+    });
+
+    if (!user) return null;
+
+    return this.jwtService.sign(
+      { sub: user.id, email: user.email, purpose: 'reset-password' },
+      {
+        secret: `${process.env.JWT_SECRET}${user.password}`,
+        expiresIn: '15m',
+      },
+    );
   }
 }

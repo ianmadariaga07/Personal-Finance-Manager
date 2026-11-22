@@ -71,7 +71,13 @@ export class AuthController {
     //passthrough
     @Res({ passthrough: true }) res: express.Response,
   ) {
-    const emailValido = await this.authService.forgotPassword(forgotPasswordDto.email);
+    //ahora se usa el token que regresa el servicio antes no pasaba nada 
+    const token = await this.authService.forgotPassword(forgotPasswordDto.email);
+
+    // por ahora el token solo se imprime en la terminal del backend, nunca en la respuesta
+    if (token) {
+      console.log(`Token de recuperacion para ${forgotPasswordDto.email}: ${token}`);
+    }
 
     return {
       message:
