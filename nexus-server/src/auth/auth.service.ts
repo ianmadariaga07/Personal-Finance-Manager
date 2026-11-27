@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { User } from '../users/entities/user.entity';
@@ -10,13 +11,17 @@ import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import * as argon2 from 'argon2';
 import { CreateUserDto } from '../users/dto/create-user.dto';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger('AuthService');
+
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly jwtService: JwtService,
+    private readonly mailService: MailService,
   ) {}
 
   async validateUser(email: string, password: string) {
@@ -75,17 +80,41 @@ export class AuthService {
   async forgotPassword(email: string) {
     const user = await this.userRepository.findOne({
       where: { email },
-      select: ['id', 'email', 'password'],
+      select: ['id', 'email', 'password', 'name'],
     });
 
     if (!user) return null;
 
-    return this.jwtService.sign(
+    const token = this.jwtService.sign(
       { sub: user.id, email: user.email, purpose: 'reset-password' },
       {
         secret: `${process.env.JWT_SECRET}${user.password}`,
         expiresIn: '15m',
       },
     );
+
+    // Enlace de recuperación hacia el frontend (el token viaja como query param).
+    const frontendUrl = (process.env.FRONTEND_URL ?? 'http://localhost:4200')
+      .split(',')[0]
+      .trim();
+    const resetUrl = `${frontendUrl}/login?resetToken=${encodeURIComponent(token)}`;
+
+    // El fallo de SMTP nunca debe romper la respuesta de forgot-password.
+    try {
+      await this.mailService.sendPasswordReset({
+        to: user.email,
+        recipientName: user.name || user.email,
+        resetUrl,
+        token,
+        expiresInMinutes: 15,
+      });
+    } catch (error) {
+      this.logger.error(
+        `No se pudo enviar el correo de recuperación a ${user.email}`,
+        error instanceof Error ? error.stack : String(error),
+      );
+    }
+
+    return token;
   }
 }

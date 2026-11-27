@@ -56,9 +56,59 @@
     </button>
 
     <div class="mt-6 text-center">
-      <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors font-mono-tech border-b border-transparent hover:border-primary pb-0.5" href="#">RESTABLECER_CONEXION</a>
+      <button type="button" (click)="openForgotPassword()" class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors font-mono-tech border-b border-transparent hover:border-primary pb-0.5 bg-transparent cursor-pointer">RESTABLECER_CONEXION</button>
     </div>
   </form>
+
+  <!-- Modal de recuperación de contraseña -->
+  @if (forgotOpen()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/70 backdrop-blur-sm" (click)="closeForgotPassword()">
+      <div class="relative w-full max-w-md bg-surface border border-outline-variant rounded-xl p-8 shadow-2xl z-10" (click)="$event.stopPropagation()">
+        <div class="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-primary/50 to-transparent"></div>
+
+        <div class="flex items-start justify-between mb-6">
+          <div>
+            <p class="font-label-sm text-label-sm text-on-surface-variant tracking-widest uppercase font-mono-tech">Seguridad // Recuperación</p>
+            <h3 class="font-headline-md text-headline-md font-bold text-primary font-mono-tech tracking-wider mt-1">RECUPERAR_ACCESO</h3>
+          </div>
+          <button type="button" (click)="closeForgotPassword()" class="text-on-surface-variant hover:text-primary transition-colors" aria-label="Cerrar">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <p class="font-label-md text-label-md text-on-surface-variant mb-6">
+          Ingresa tu correo registrado y te enviaremos un enlace seguro para restablecer tu contraseña.
+        </p>
+
+        <form [formGroup]="forgotForm" (ngSubmit)="sendForgotPassword()" class="space-y-5">
+          <div class="group">
+            <label class="block font-label-md text-label-md text-on-surface-variant mb-2 font-mono-tech uppercase tracking-wide group-focus-within:text-primary transition-colors" for="forgot-email">CORREO_REGISTRADO</label>
+            <div class="relative">
+              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors text-lg">alternate_email</span>
+              <input formControlName="email" id="forgot-email" placeholder="tu@correo.com" type="email" maxlength="100" class="w-full bg-background border border-outline-variant py-3 pl-10 pr-4 text-on-surface font-mono-tech focus:border-primary outline-none focus:ring-0 transition-colors rounded placeholder:text-on-surface-variant/30"/>
+            </div>
+            @if (forgotForm.controls.email.touched && forgotForm.controls.email.invalid) {
+              <p class="mt-2 text-xs text-primary font-mono-tech">Ingresa un correo válido.</p>
+            }
+          </div>
+
+          @if (forgotError()) {
+            <div class="border border-primary/50 bg-primary/10 rounded p-3 text-sm text-on-surface font-mono-tech">{{ forgotError() }}</div>
+          }
+          @if (forgotMessage()) {
+            <div class="border border-green-500/50 bg-green-500/10 rounded p-3 text-sm text-on-surface font-mono-tech">{{ forgotMessage() }}</div>
+          }
+
+          <div class="flex gap-3 pt-2">
+            <button type="button" (click)="closeForgotPassword()" class="flex-1 py-3 border border-outline-variant text-on-surface-variant font-mono-tech font-bold rounded tracking-widest uppercase hover:border-primary hover:text-primary transition-colors">Cancelar</button>
+            <button type="submit" [disabled]="forgotLoading()" class="flex-1 py-3 border border-primary text-primary font-mono-tech font-bold rounded tracking-widest uppercase hover:bg-primary-container/30 transition-colors disabled:opacity-50">
+              @if (forgotLoading()) { ENVIANDO... } @else { ENVIAR_ENLACE }
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
 
   <!-- Footer -->
   <div class="mt-12 z-10 text-center font-mono-tech font-label-sm text-label-sm text-on-surface-variant/50 tracking-widest">

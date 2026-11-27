@@ -48,4 +48,11 @@ export class AuthService {
     this.isLoggedIn.set(false);
     this.currentUser.set(null);
   }
+
+  //solicita el correo de recuperacion de contraseña al backend
+  forgotPassword(email: string) {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/forgot-password`, {
+      email,
+    });
+  }
 }

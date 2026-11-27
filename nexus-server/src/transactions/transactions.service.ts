@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -6,14 +6,19 @@ import { Repository } from 'typeorm';
 import { Transaction } from './entities/transaction.entity';
 import { TransactionType } from './entities/transaction.entity';
 import { SubAccount } from '../sub-accounts/entities/sub-account.entity';
+import { MailService } from '../mail/mail.service';
+import type { TransactionTypeValue } from '../mail/mail.templates';
 
 @Injectable()
 export class TransactionsService {
+  private readonly logger = new Logger('TransactionsService');
+
   constructor(
     @InjectRepository(SubAccount)
     private readonly subAccountRepository: Repository<SubAccount>,
     @InjectRepository(Transaction)
     private readonly transactionRepository: Repository<Transaction>,
+    private readonly mailService: MailService,
   ) {}
 
   async create(createTransactionDto: CreateTransactionDto, user: string) {
@@ -24,6 +29,7 @@ export class TransactionsService {
           id: user,
         },
       },
+      relations: ['user'],
     });
 
     if (!subAccount)
@@ -41,6 +47,32 @@ export class TransactionsService {
     //primero guardamos la subcuenta y despues la transaccion
     await this.subAccountRepository.save(subAccount);
     await this.transactionRepository.save(transaction);
+
+    //NOTIFICACION POR CORREO (alerta de movimiento financiero)
+    //Un fallo de red/SMTP se registra en el logger pero NUNCA bloquea ni
+    //revierte el registro de la transaccion ya guardada.
+    try {
+      const owner = subAccount.user;
+      if (owner?.email) {
+        await this.mailService.sendTransactionAlert({
+          to: owner.email,
+          recipientName: owner.name || owner.email,
+          amount,
+          type: transaction.type as TransactionTypeValue,
+          concept: transaction.concept,
+          description: transaction.description,
+          subAccountName: subAccount.name,
+          transactionDate: transaction.transactionDate ?? new Date(),
+          isCreditCard: transaction.isCreditCard,
+        });
+      }
+    } catch (error) {
+      this.logger.error(
+        `No se pudo enviar la alerta de movimiento de la transacción ${transaction.id}`,
+        error instanceof Error ? error.stack : String(error),
+      );
+    }
+
     return transaction;
   }
 
